@@ -1,0 +1,5 @@
+# JetPack 4.6 / Python 3.6. Use system TensorRT and OpenCV.
+numpy==1.19.4
+Pillow==8.4.0
+Cython==0.29.36
+pycocotools==2.0.6

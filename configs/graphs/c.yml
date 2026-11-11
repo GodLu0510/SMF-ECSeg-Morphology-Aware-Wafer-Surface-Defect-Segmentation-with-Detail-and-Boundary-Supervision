@@ -1,0 +1,169 @@
+task: segmentation
+backbone:
+- - -1
+  - ViTAdapter
+  - name: ecseg_vitt
+    embed_dim: 192
+    num_heads: 3
+    interaction_indexes:
+    - 10
+    - 11
+    weights_path: ''
+    patch_size: 16
+    num_levels: 3
+    embed_layer: ConvPyramidPatchEmbed
+    ffn_layer: mlp
+    ffn_ratio: 4
+    depth: 12
+- - 0
+  - SelectFeature
+  - - 0
+- - 0
+  - SelectFeature
+  - - 1
+- - 0
+  - SelectFeature
+  - - 2
+encoder:
+- - 3
+  - TransformerEncoder2D
+  - d_model: 192
+    nhead: 8
+    dim_feedforward: 512
+    dropout: 0.0
+    activation: silu
+    num_layers: 1
+    pe_temperature: 10000
+    feat_stride: 32
+- - -1
+  - ConvNormLayer_fuse
+  - - 192
+    - 192
+    - 1
+    - 1
+- - -1
+  - nn.Upsample
+  - - null
+    - 2
+    - nearest
+- - - 6
+    - 2
+  - Add
+  - []
+- - -1
+  - RepNCSPELAN4
+  - c1: 192
+    c2: 192
+    c3: 384
+    c4: 32
+    n: 2
+    act: silu
+    csp_type: csp2
+- - -1
+  - ConvNormLayer_fuse
+  - - 192
+    - 192
+    - 1
+    - 1
+- - -1
+  - nn.Upsample
+  - - null
+    - 2
+    - nearest
+- - - 10
+    - 1
+  - Add
+  - []
+- - -1
+  - RepNCSPELAN4
+  - c1: 192
+    c2: 192
+    c3: 384
+    c4: 32
+    n: 2
+    act: silu
+    csp_type: csp2
+- - -1
+  - SCDown
+  - - 192
+    - 192
+    - 3
+    - 2
+- - - 13
+    - 9
+  - Add
+  - []
+- - -1
+  - RepNCSPELAN4
+  - c1: 192
+    c2: 192
+    c3: 384
+    c4: 32
+    n: 2
+    act: silu
+    csp_type: csp2
+- - -1
+  - SCDown
+  - - 192
+    - 192
+    - 3
+    - 2
+- - - 16
+    - 5
+  - Add
+  - []
+- - -1
+  - RepNCSPELAN4
+  - c1: 192
+    c2: 192
+    c3: 384
+    c4: 32
+    n: 2
+    act: silu
+    csp_type: csp2
+decoder:
+- - - 12
+    - 15
+    - 18
+  - ECTransformer
+  - feat_channels:
+    - 192
+    - 192
+    - 192
+    feat_strides:
+    - 8
+    - 16
+    - 32
+    hidden_dim: 192
+    num_levels: 3
+    num_layers: 4
+    eval_idx: -1
+    num_queries: 300
+    num_denoising: 100
+    label_noise_ratio: 0.5
+    box_noise_scale: 1.0
+    reg_max: 32
+    reg_scale: 4
+    layer_scale: 1
+    num_points:
+    - 3
+    - 6
+    - 3
+    cross_attn_method: default
+    query_select_method: default
+    activation: silu
+    dim_feedforward: 512
+    mask_downsample_ratio: 4
+    nhead: 8
+parameter_paths:
+  0: backbone
+  4: encoder.encoder.0
+  5: encoder.lateral_convs.0
+  8: encoder.fpn_blocks.0
+  9: encoder.lateral_convs.1
+  12: encoder.fpn_blocks.1
+  13: encoder.downsample_convs.0.0
+  15: encoder.pan_blocks.0
+  16: encoder.downsample_convs.1.0
+  18: encoder.pan_blocks.1
+  19: decoder

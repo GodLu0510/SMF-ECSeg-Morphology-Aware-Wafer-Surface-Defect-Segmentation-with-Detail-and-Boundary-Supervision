@@ -1,0 +1,20 @@
+__include__:
+- common.yml
+model: ECGraph
+ECGraph:
+  yaml_path: ../configs/graphs/ac.yml
+  skip_load_backbone: true
+output_dir: outputs/ecseg_s_ac
+ablation:
+  variant: ac
+  A_detail: true
+  B_morphology: false
+  C_supervision: true
+ECCriterion:
+  wafer_mask_supervision: true
+  wafer_foreground_fraction: 0.25
+  wafer_boundary_fraction: 0.25
+  wafer_boundary_radius: 2
+  wafer_boundary_tolerance: 1
+  weight_dict:
+    loss_mask_boundary: 1.0

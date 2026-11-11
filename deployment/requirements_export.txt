@@ -1,0 +1,4 @@
+-r ../requirements.txt
+onnx>=1.17,<2
+onnxruntime>=1.20,<2
+onnxsim>=0.4.36

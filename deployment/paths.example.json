@@ -1,0 +1,16 @@
+{
+  "training_source": "",
+  "training_config": "",
+  "checkpoint": "",
+  "annotations": "",
+  "verify_image": "",
+  "images": "",
+  "manifest": "",
+  "rknn_model": "",
+  "tensorrt_project": "",
+  "engines": "",
+  "calibration_images": "",
+  "onnxruntime_wheel": "",
+  "export_dir": "",
+  "dynamic_onnx_dir": ""
+}

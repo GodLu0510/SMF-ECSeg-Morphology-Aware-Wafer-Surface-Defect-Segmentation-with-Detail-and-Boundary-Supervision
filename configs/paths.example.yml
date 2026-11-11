@@ -1,0 +1,11 @@
+# Copy to paths.local.yml, then enter your own paths.
+# Relative paths resolve against this file, not the shell working directory.
+train_images: ''
+train_annotations: ''
+val_images: ''
+val_annotations: ''
+test_images: ''
+test_annotations: ''
+pretrained_checkpoint: ''
+resume_checkpoint: ''
+inference_checkpoint: ''
